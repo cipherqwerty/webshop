@@ -31,6 +31,34 @@ const resources = {
 			signup: 'Loo uus konto',
 		},
 	},
+
+	es: {
+		translation: {
+			'maintain-categories': 'Mantener categorías',
+			'maintain-shops': 'Mantener los comercios',
+			'add-product': 'Añadir producto',
+			'maintain-products': 'Mantener los productos',
+			shops: 'Tiendas',
+			contact: 'Contacto',
+			cart: 'Carro',
+			login: 'Inicio de sesión',
+			signup: 'Registrarse',
+		},
+	},
+
+	ja: {
+		translation: {
+			'maintain-categories': 'カテゴリーの維持',
+			'maintain-shops': 'ショップの管理',
+			'add-product': '商品の追加',
+			'maintain-products': '商品の管理',
+			shops: 'ショップ',
+			contact: '連絡先',
+			cart: 'カート',
+			login: 'ログイン',
+			signup: 'サインアップ',
+		},
+	},
 };
 
 i18n

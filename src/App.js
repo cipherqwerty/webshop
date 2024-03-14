@@ -49,33 +49,3 @@ function App() {
 }
 
 export default App;
-
-// Koju: muuta index.html sees rakenduse nime ja pisipilti
-// Koju: Loo siia projekti ka 3s ja 4s keel (võid tõlkida chatGPT abiga)
-// Koju: changeLangEe ja teise 3 asemel tehke üks funktsioon, mida taaskasutatakse
-//          changeLang   -> onClick={() => changeLang("ee")}
-// Saab võtta põhja kuidas tegime eesti keelsel veebipoel
-//        Tooted.js sees esitähe järgi filtreerimist
-
-// NotFound.jsx lehe korrektseks tegemine
-
-// MaintainProducts.jsx vaade tabeli kujul,
-//    kuvades välja kõik toote omadused (rating võib olla huvitav)
-//    Täpselt samamoodi nagu eesti keelses
-// Kustutada failist
-
-// Cart.jsx
-// On võimalik lisada ostukorvi HomePage.jsx lehelt
-// Ostukorvis kuvatakse kõik tooted välja
-// Saab kustutada, saab tühjendada, saab lõppu juurde panna
-// Kokkuarvutus, mitu tk on
-
-// -----------------------
-
-// AddProduct.jsx
-// Võimalda toodet lisada
-
-// SingleProduct.jsx tegemine
-//    HomePage.jsx sisse tehke nupp "Vt lähemalt",
-//          millega läheb SingleProduct.jsx vaatesse
-// SingleProduct.jsx lehel kuvage välja kõik toote omadused

@@ -7,12 +7,12 @@ import { useTranslation } from 'react-i18next';
 function NavBar() {
 	const { t, i18n } = useTranslation();
 
-	const changeLangEn = () => {
-		i18n.changeLanguage('en');
-	};
-
 	const changeLangEe = () => {
 		i18n.changeLanguage('ee');
+	};
+
+	const changeLang = (lang) => {
+		i18n.changeLanguage(lang);
 	};
 
 	return (
@@ -39,7 +39,19 @@ function NavBar() {
 					</Nav>
 					<Nav>
 						<img
-							onClick={changeLangEn}
+							onClick={() => changeLang('ja')}
+							className='lang'
+							src='/japan.png'
+							alt=''
+						/>
+						<img
+							onClick={() => changeLang('es')}
+							className='lang'
+							src='/spanish.png'
+							alt=''
+						/>
+						<img
+							onClick={() => changeLang('en')}
 							className='lang'
 							src='/english.png'
 							alt=''
@@ -50,6 +62,7 @@ function NavBar() {
 							src='/estonian.png'
 							alt=''
 						/>
+
 						<Nav.Link as={Link} to='/login'>
 							{t('login')}
 						</Nav.Link>
