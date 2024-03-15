@@ -16,6 +16,7 @@ import MaintainShops from './pages/admin/MaintainShops';
 import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import NavBar from './components/NavBar';
+import Supplier from './pages/admin/Supplier';
 
 function App() {
 	return (
@@ -38,6 +39,7 @@ function App() {
 					element={<MaintainCategories />}
 				/>
 				<Route path='admin/maintain-shops' element={<MaintainShops />} />
+				<Route path='admin/supplier' element={<Supplier />} />
 
 				<Route path='login' element={<Login />} />
 				<Route path='signup' element={<Signup />} />

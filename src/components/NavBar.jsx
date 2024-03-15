@@ -12,7 +12,8 @@ function NavBar() {
 	};
 
 	const changeLang = (lang) => {
-		i18n.changeLanguage(lang);
+		i18n.changeLanguage(lang); // react 18n moodul
+		localStorage.setItem('language', lang); // js
 	};
 
 	return (
