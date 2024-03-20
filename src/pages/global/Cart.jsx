@@ -5,6 +5,7 @@ function Cart() {
 		JSON.parse(localStorage.getItem('cart')) || []
 	);
 	const [parcelMachines, setParcelMachines] = useState([]);
+	const [selectedCountry, setSelectedCountry] = useState('EE');
 
 	useEffect(() => {
 		fetch('https://www.omniva.ee/locations.json')
@@ -18,47 +19,52 @@ function Cart() {
 		return sum.toFixed(2);
 	};
 
-	const removeItem = (e) => {
-		item.splice(e, 1);
-		setItem(item.slice()); // HTML uuendus
-		localStorage.setItem('cart', JSON.stringify(item)); // LocalStorage salvestus
+	const removeItem = (index) => {
+		const updatedItems = [...item];
+		updatedItems.splice(index, 1);
+		setItem(updatedItems);
+		localStorage.setItem('cart', JSON.stringify(updatedItems));
 	};
 
-	const clearCart = (e) => {
-		item.splice(e);
-		setItem(item.slice());
-		localStorage.setItem('cart', JSON.stringify(item)); // LocalStorage salvestus
+	const clearCart = () => {
+		setItem([]);
+		localStorage.removeItem('cart');
 	};
 
 	const averageRating = () => {
 		let sum = 0;
 		item.forEach((cart) => (sum = sum + cart.product.rating.rate));
-		return (sum ?? item.length).toFixed(1);
+		return (sum / item.length).toFixed(1);
 	};
 
 	const decreaseQuantity = (index) => {
-		item[index].quantity = item[index].quantity - 1;
-
-		if (item[index].quantity === 0) {
-			item.splice(index, 1);
+		const updatedItems = [...item];
+		updatedItems[index].quantity -= 1;
+		if (updatedItems[index].quantity === 0) {
+			updatedItems.splice(index, 1);
 		}
-		setItem(item.slice());
-		localStorage.setItem('cart', JSON.stringify(item)); // LocalStorage salvestus
+		setItem(updatedItems);
+		localStorage.setItem('cart', JSON.stringify(updatedItems));
 	};
 
 	const increaseQuantity = (index) => {
-		item[index].quantity = item[index].quantity + 1;
-		setItem(item.slice());
-		localStorage.setItem('cart', JSON.stringify(item)); // LocalStorage salvestus
+		const updatedItems = [...item];
+		updatedItems[index].quantity += 1;
+		setItem(updatedItems);
+		localStorage.setItem('cart', JSON.stringify(updatedItems));
+	};
+
+	const parcelSelect = (e) => {
+		setSelectedCountry(e);
 	};
 
 	return (
 		<div>
 			{item.length > 1 ? <div>Items in cart: {item.length}</div> : undefined}
 			{item.length === 0 && <div>The cart is currently empty</div>}
-			<button onClick={clearCart}>Tühjenda</button>
-			{item.map((cartProduct, e) => (
-				<div key={e}>
+			<button onClick={clearCart}>Empty Cart</button>
+			{item.map((cartProduct, index) => (
+				<div key={index}>
 					<div>
 						<img
 							style={{ width: '60px' }}
@@ -69,35 +75,39 @@ function Cart() {
 					<div>
 						{cartProduct.product.title}
 						<div>{cartProduct.product.price} € </div>
-						<button onClick={() => decreaseQuantity(e)}>-</button>
-						<div>{cartProduct.quantity} tk</div>
-						<button onClick={() => increaseQuantity(e)}>+</button>
+						<button onClick={() => decreaseQuantity(index)}>-</button>
+						<div>{cartProduct.quantity} pcs</div>
+						<button onClick={() => increaseQuantity(index)}>+</button>
 
 						<div>
 							{cartProduct.product.rating.rate}{' '}
 							<span className='fa fa-star checked'></span>
 						</div>
-					</div>{' '}
+					</div>
 					<div>
 						{(cartProduct.product.price * cartProduct.quantity).toFixed(2)} €
 					</div>
-					<button onClick={() => removeItem(e)}>Delete</button> <br />
+					<button onClick={() => removeItem(index)}>Delete</button> <br />
 					<br />
 				</div>
 			))}
 			{item.length > 0 && (
-				<React.Fragment>
-					<div>The total is: {calculateTotal()} €</div>
-					<div>Average is: {averageRating()}</div>
-
+				<>
+					<div>Total: {calculateTotal()} €</div>
+					<div>Average Rating: {averageRating()}</div> <br />
+					<div>
+						<button onClick={() => parcelSelect('EE')}>EE</button>
+						<button onClick={() => parcelSelect('LV')}>LV</button>
+						<button onClick={() => parcelSelect('LT')}>LT</button>
+					</div>
 					<select>
 						{parcelMachines
-							.filter((pm) => pm.A0_NAME === 'EE')
-							.map((pm) => (
-								<option>{pm.NAME}</option>
+							.filter((pm) => pm.A0_NAME === selectedCountry)
+							.map((pm, index) => (
+								<option key={index}>{pm.NAME}</option>
 							))}
 					</select>
-				</React.Fragment>
+				</>
 			)}
 		</div>
 	);
