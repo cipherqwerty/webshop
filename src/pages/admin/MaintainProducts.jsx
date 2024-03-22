@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import productJSON from '../../data/products.json';
-
+import { Link } from 'react-router-dom';
 function MaintainProducts() {
 	const [product, setProduct] = useState(productJSON);
+
+	const searchRef = useRef();
 	const removeX = (e) => {
 		productJSON.splice(e, 1);
 		setProduct(productJSON.slice());
@@ -13,9 +15,18 @@ function MaintainProducts() {
 		setProduct(product.slice());
 	};
 
+	const searchFromProducts = () => {
+		const result = product.filter((el) =>
+			el.title.includes(searchRef.current.value)
+		);
+		setProduct(result);
+	};
+
 	return (
 		<div>
 			<button onClick={sortFirstLetter}>Sort Title</button>
+			<input ref={searchRef} onChange={searchFromProducts} type='text' />
+			<span>{product.length} tk</span>
 			<table>
 				<thead>
 					<tr>
@@ -30,7 +41,7 @@ function MaintainProducts() {
 					</tr>
 				</thead>
 				<tbody>
-					{productJSON.map((toode, id) => (
+					{product.map((toode, id) => (
 						<tr key={id}>
 							<td>{toode.id}</td>
 							<td>{toode.title}</td>
@@ -44,6 +55,9 @@ function MaintainProducts() {
 							<td>{toode.rating.count}</td>
 							<td>
 								<button onClick={() => removeX(id)}>x</button>
+								<Link to={'/admin/edit-product/' + id}>
+									<button>Edit</button>
+								</Link>
 							</td>
 						</tr>
 					))}

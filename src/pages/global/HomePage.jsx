@@ -44,17 +44,15 @@ function HomePage() {
 		setProduct(product.slice());
 	};
 
-	const filterMens = (category) => {
-		const result = productsJSON.filter((product) =>
+	const filterMens = () => {
+		const result = product.filter((product) =>
 			product.category.includes("men's clothing")
 		);
 		setProduct(result); // EI TOOTA
 	};
 
 	const filterJewelry = () => {
-		const result = productsJSON.filter(
-			(product) => product.category === 'jewelery'
-		);
+		const result = product.filter((product) => product.category === 'jewelery');
 		setProduct(result); // EI TOOTA
 	};
 	// 	const filterCategory = (category) => {
@@ -87,7 +85,7 @@ function HomePage() {
 			<button onClick={filterJewelry}>jewelery</button>
 			<button>electronics</button>
 			<button>women's clothing</button>
-			{productsJSON.map((product, id) => (
+			{product.map((product, id) => (
 				<div key={product.id}>
 					<img style={{ width: '100px' }} src={product.image} alt='' />
 					<div>{product.title}</div>
