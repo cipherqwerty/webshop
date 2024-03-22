@@ -1,4 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import '../../css/Cart.css';
+import Star from '@mui/icons-material/Star';
+import LocalShipping from '@mui/icons-material/LocalShipping';
+import { Button } from '@mui/material';
 
 function Cart() {
 	const [item, setItem] = useState(
@@ -6,11 +10,16 @@ function Cart() {
 	);
 	const [parcelMachines, setParcelMachines] = useState([]);
 	const [selectedCountry, setSelectedCountry] = useState('EE');
+	const [originalPM, setOriginalPM] = useState([]);
+	const searchRef = useRef();
 
 	useEffect(() => {
 		fetch('https://www.omniva.ee/locations.json')
 			.then((res) => res.json())
-			.then((body) => setParcelMachines(body));
+			.then((body) => {
+				setParcelMachines(body);
+				setOriginalPM(body);
+			});
 	}, []);
 
 	const calculateTotal = () => {
@@ -29,12 +38,6 @@ function Cart() {
 	const clearCart = () => {
 		setItem([]);
 		localStorage.removeItem('cart');
-	};
-
-	const averageRating = () => {
-		let sum = 0;
-		item.forEach((cart) => (sum = sum + cart.product.rating.rate));
-		return (sum / item.length).toFixed(1);
 	};
 
 	const decreaseQuantity = (index) => {
@@ -58,57 +61,103 @@ function Cart() {
 		setSelectedCountry(e);
 	};
 
+	const searchPM = () => {
+		const result = originalPM.filter((e) =>
+			e.NAME.toLowerCase().includes(searchRef.current.value.toLowerCase())
+		);
+		setParcelMachines(result);
+	};
+
 	return (
 		<div>
-			{item.length > 1 ? <div>Items in cart: {item.length}</div> : undefined}
-			{item.length === 0 && <div>The cart is currently empty</div>}
-			<button onClick={clearCart}>Empty Cart</button>
+			<div className='cart-top'>
+				{item.length > 1 ? <div>Items in cart: {item.length}</div> : undefined}
+				{item.length === 0 && <div>The cart is currently empty</div>}
+				{item.length > 1 ? (
+					<img
+						className='button'
+						src='/empty-cart.png'
+						alt=''
+						onClick={clearCart}
+					/>
+				) : undefined}
+			</div>
+
 			{item.map((cartProduct, index) => (
-				<div key={index}>
-					<div>
+				<div className='product' key={index}>
+					<img
+						className='image'
+						style={{ width: '60px' }}
+						src={cartProduct.product.image}
+						alt='/'
+					/>
+					<div className='title'>{cartProduct.product.title}</div>
+					<div className='rate'>
+						{cartProduct.product.rating.rate}
+						<Star />
+					</div>
+					<div className='quantity'>
 						<img
-							style={{ width: '60px' }}
-							src={cartProduct.product.image}
-							alt='/'
+							className='button'
+							onClick={() => decreaseQuantity(index)}
+							src='/minus.png'
+							alt=''
+						/>
+						<div>{cartProduct.quantity} pcs</div>
+						<img
+							src='/plus.png'
+							alt=''
+							className='button'
+							onClick={() => increaseQuantity(index)}
 						/>
 					</div>
-					<div>
-						{cartProduct.product.title}
-						<div>{cartProduct.product.price} € </div>
-						<button onClick={() => decreaseQuantity(index)}>-</button>
-						<div>{cartProduct.quantity} pcs</div>
-						<button onClick={() => increaseQuantity(index)}>+</button>
 
-						<div>
-							{cartProduct.product.rating.rate}{' '}
-							<span className='fa fa-star checked'></span>
-						</div>
-					</div>
-					<div>
+					<div className='total'>
 						{(cartProduct.product.price * cartProduct.quantity).toFixed(2)} €
 					</div>
-					<button onClick={() => removeItem(index)}>Delete</button> <br />
-					<br />
+					<img
+						src='/remove.png'
+						alt=''
+						className='button'
+						onClick={() => removeItem(index)}
+					/>
 				</div>
 			))}
-			{item.length > 0 && (
-				<>
-					<div>Total: {calculateTotal()} €</div>
-					<div>Average Rating: {averageRating()}</div> <br />
-					<div>
-						<button onClick={() => parcelSelect('EE')}>EE</button>
-						<button onClick={() => parcelSelect('LV')}>LV</button>
-						<button onClick={() => parcelSelect('LT')}>LT</button>
-					</div>
-					<select>
-						{parcelMachines
-							.filter((pm) => pm.A0_NAME === selectedCountry)
-							.map((pm, index) => (
-								<option key={index}>{pm.NAME}</option>
-							))}
-					</select>
-				</>
-			)}
+
+			<div className='cart-bottom'>
+				{item.length > 0 && (
+					<>
+						<div>Total: {calculateTotal()} €</div>
+						<div>
+							<Button variant='outlined' onClick={() => parcelSelect('EE')}>
+								EE
+							</Button>
+							<Button variant='outlined' onClick={() => parcelSelect('LV')}>
+								LV
+							</Button>
+							<Button variant='outlined' onClick={() => parcelSelect('LT')}>
+								LT
+							</Button>
+						</div>
+						<input ref={searchRef} type='text' onChange={searchPM} />
+						<span>
+							{
+								parcelMachines.filter((pm) => pm.A0_NAME === selectedCountry)
+									.length
+							}{' '}
+							tk
+						</span>
+						<LocalShipping />
+						<select>
+							{parcelMachines
+								.filter((pm) => pm.A0_NAME === selectedCountry)
+								.map((pm, index) => (
+									<option key={index}>{pm.NAME}</option>
+								))}
+						</select>
+					</>
+				)}
+			</div>
 		</div>
 	);
 }

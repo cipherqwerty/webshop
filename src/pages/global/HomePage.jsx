@@ -3,6 +3,8 @@ import productsJSON from '../../data/products.json';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import '../../css/HomePage.css';
+import { Button } from '@mui/material';
 function HomePage() {
 	const [product, setProduct] = useState(productsJSON);
 
@@ -45,8 +47,8 @@ function HomePage() {
 	};
 
 	const filterMens = () => {
-		const result = product.filter((product) =>
-			product.category.includes("men's clothing")
+		const result = product.filter(
+			(product) => product.category === "men's clothing"
 		);
 		setProduct(result); // EI TOOTA
 	};
@@ -55,48 +57,51 @@ function HomePage() {
 		const result = product.filter((product) => product.category === 'jewelery');
 		setProduct(result); // EI TOOTA
 	};
-	// 	const filterCategory = (category) => {
-	// 		const filteredProducts = productsJSON.filter(product =>
-	// 				product.category.toLowerCase() === category.toLowerCase()
-	// 		);
-	// 		setProducts(filteredProducts);
-	// };
-
-	// const sortBasedRating = () => {
-	// 	productsJSON.sort()
-	// };
-
-	// sorteerimine reitingu alusel
-
-	// filtreerimine -> kategooria alusel
-
-	// lisage toast, mis ütleb toote nimetuse, mis läheb ostukorvi
 
 	return (
 		<div>
 			<div>
-				<button onClick={sortAZ}>Sort A-Z</button>
-				<button onClick={sortPriceAsc}>Lower € first</button>
-				<button onClick={sortPriceDesc}>Higher € first</button>
-				<button onClick={sortRate}>Rating</button>
+				<Button variant='outlined' onClick={sortAZ}>
+					Sort A-Z
+				</Button>
+				<Button variant='outlined' onClick={sortPriceAsc}>
+					Lower € first
+				</Button>
+				<Button variant='outlined' onClick={sortPriceDesc}>
+					Higher € first
+				</Button>
+				<Button variant='outlined' onClick={sortRate}>
+					Rating
+				</Button>
 			</div>
 
-			<button onClick={filterMens}>men's clothing</button>
-			<button onClick={filterJewelry}>jewelery</button>
-			<button>electronics</button>
-			<button>women's clothing</button>
-			{product.map((product, id) => (
-				<div key={product.id}>
-					<img style={{ width: '100px' }} src={product.image} alt='' />
-					<div>{product.title}</div>
-					<div>{product.price}</div>
-					<div>{product.rating.rate}</div>
-					<button onClick={() => addToCart(product)}>Add To Cart</button>
-					<Link to={'/product/' + id}>
-						<button style={{ marginLeft: '10px' }}>Inspect</button>
-					</Link>
-				</div>
-			))}
+			<div>
+				<Button onClick={filterMens}>men's clothing</Button>
+				<Button onClick={filterJewelry}>jewelery</Button>
+			</div>
+			<div className='products'>
+				{product.map((product, id) => (
+					<div className='home-product' key={product.id}>
+						<img style={{ width: '100px' }} src={product.image} alt='' />
+						<div className='product-title'>{product.title}</div>
+						<div>{product.price}</div>
+						<div>{product.rating.rate}</div>
+						<Button
+							variant='outlined'
+							disabled={product.active === false}
+							onClick={() => addToCart(product)}
+						>
+							Add To Cart
+						</Button>
+						<Link to={'/product/' + id}>
+							<Button variant='contained' style={{ marginLeft: '10px' }}>
+								Inspect
+							</Button>
+						</Link>
+					</div>
+				))}
+			</div>
+
 			<ToastContainer />
 		</div>
 	);

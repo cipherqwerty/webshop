@@ -16,10 +16,22 @@ function MaintainProducts() {
 	};
 
 	const searchFromProducts = () => {
-		const result = product.filter((el) =>
-			el.title.includes(searchRef.current.value)
+		const result = productJSON.filter(
+			(el) =>
+				el.title
+					.toLowerCase()
+					.includes(searchRef.current.value.toLowerCase()) ||
+				el.description
+					.toLowerCase()
+					.includes(searchRef.current.value.toLowerCase()) ||
+				el.id === Number(searchRef.current.value)
 		);
 		setProduct(result);
+	};
+
+	const changeActive = (i) => {
+		productJSON[i].active = !productJSON[i].active;
+		setProduct(productJSON.slice());
 	};
 
 	return (
@@ -42,7 +54,11 @@ function MaintainProducts() {
 				</thead>
 				<tbody>
 					{product.map((toode, id) => (
-						<tr key={id}>
+						<tr
+							onClick={() => changeActive(id)}
+							key={toode.id}
+							className={toode.active ? 'active' : 'in-active'}
+						>
 							<td>{toode.id}</td>
 							<td>{toode.title}</td>
 							<td>{toode.price}</td>
