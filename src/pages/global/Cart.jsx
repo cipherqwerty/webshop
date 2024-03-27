@@ -145,16 +145,21 @@ function Cart() {
 								parcelMachines.filter((pm) => pm.A0_NAME === selectedCountry)
 									.length
 							}{' '}
-							tk
+							pcs
 						</span>
 						<LocalShipping />
-						<select>
-							{parcelMachines
-								.filter((pm) => pm.A0_NAME === selectedCountry)
-								.map((pm, index) => (
-									<option key={index}>{pm.NAME}</option>
-								))}
-						</select>
+
+						{parcelMachines.length === 0 ? (
+							<div>Loading...</div>
+						) : (
+							<select>
+								{parcelMachines
+									.filter((pm) => pm.A0_NAME === selectedCountry)
+									.map((pm, index) => (
+										<option key={index}>{pm.NAME}</option>
+									))}
+							</select>
+						)}
 					</>
 				)}
 			</div>

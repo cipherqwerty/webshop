@@ -26,3 +26,9 @@
 	background-color: red;
 	border: 1px solid red;
 }
+
+.map {
+	height: 300px;
+	margin: 3%;
+	border-radius: 10px;
+}
