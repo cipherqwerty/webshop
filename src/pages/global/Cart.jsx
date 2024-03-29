@@ -1,26 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import '../../css/Cart.css';
 import Star from '@mui/icons-material/Star';
 import LocalShipping from '@mui/icons-material/LocalShipping';
-import { Button } from '@mui/material';
+import ParcelMachines from '../../components/ParcelMachines';
 
 function Cart() {
 	const [item, setItem] = useState(
 		JSON.parse(localStorage.getItem('cart')) || []
 	);
-	const [parcelMachines, setParcelMachines] = useState([]);
-	const [selectedCountry, setSelectedCountry] = useState('EE');
-	const [originalPM, setOriginalPM] = useState([]);
-	const searchRef = useRef();
-
-	useEffect(() => {
-		fetch('https://www.omniva.ee/locations.json')
-			.then((res) => res.json())
-			.then((body) => {
-				setParcelMachines(body);
-				setOriginalPM(body);
-			});
-	}, []);
 
 	const calculateTotal = () => {
 		let sum = 0;
@@ -55,17 +42,6 @@ function Cart() {
 		updatedItems[index].quantity += 1;
 		setItem(updatedItems);
 		localStorage.setItem('cart', JSON.stringify(updatedItems));
-	};
-
-	const parcelSelect = (e) => {
-		setSelectedCountry(e);
-	};
-
-	const searchPM = () => {
-		const result = originalPM.filter((e) =>
-			e.NAME.toLowerCase().includes(searchRef.current.value.toLowerCase())
-		);
-		setParcelMachines(result);
 	};
 
 	return (
@@ -128,38 +104,8 @@ function Cart() {
 				{item.length > 0 && (
 					<>
 						<div>Total: {calculateTotal()} €</div>
-						<div>
-							<Button variant='outlined' onClick={() => parcelSelect('EE')}>
-								EE
-							</Button>
-							<Button variant='outlined' onClick={() => parcelSelect('LV')}>
-								LV
-							</Button>
-							<Button variant='outlined' onClick={() => parcelSelect('LT')}>
-								LT
-							</Button>
-						</div>
-						<input ref={searchRef} type='text' onChange={searchPM} />
-						<span>
-							{
-								parcelMachines.filter((pm) => pm.A0_NAME === selectedCountry)
-									.length
-							}{' '}
-							pcs
-						</span>
+						<ParcelMachines />
 						<LocalShipping />
-
-						{parcelMachines.length === 0 ? (
-							<div>Loading...</div>
-						) : (
-							<select>
-								{parcelMachines
-									.filter((pm) => pm.A0_NAME === selectedCountry)
-									.map((pm, index) => (
-										<option key={index}>{pm.NAME}</option>
-									))}
-							</select>
-						)}
 					</>
 				)}
 			</div>

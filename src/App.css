@@ -20,6 +20,7 @@
 .active {
 	background-color: green;
 	border: 1px solid green;
+	opacity: 80%;
 }
 
 .in-active {

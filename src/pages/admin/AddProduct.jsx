@@ -1,9 +1,28 @@
-import React, { useRef, useState } from 'react';
-import productsJSON from '../../data/products.json';
+import React, { useEffect, useRef, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 
 function AddProduct() {
 	const [message, setMessage] = useState('');
 	const [idUnique, setIdUnique] = useState(false);
+	const [categories, setCategories] = useState([]);
+	const [isLoading, setLoading] = useState(true);
+	const [origProduct, setOrigProduct] = useState([]);
+
+	useEffect(() => {
+		fetch(process.env.REACT_APP_PRODUCTS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setOrigProduct(data || []);
+				setLoading(false);
+			});
+	}, []);
+
+	useEffect(() => {
+		fetch(process.env.REACT_APP_CATEGORIES_URL)
+			.then((res) => res.json())
+			.then((data) => setCategories(data || []));
+	}, []);
+
 	const idRef = useRef();
 	const titleRef = useRef();
 	const priceRef = useRef();
@@ -22,7 +41,7 @@ function AddProduct() {
 			return setMessage('Canat add product with empty price');
 		}
 
-		productsJSON.push({
+		origProduct.push({
 			id: Number(idRef.current.value),
 			title: titleRef.current.value,
 			price: Number(priceRef.current.value),
@@ -34,10 +53,14 @@ function AddProduct() {
 				count: 0,
 			},
 		});
+		fetch(process.env.REACT_APP_PRODUCTS_URL, {
+			method: 'PUT',
+			body: JSON.stringify(origProduct),
+		});
 	};
 
 	const checkIdUnique = () => {
-		const index = productsJSON.findIndex(
+		const index = origProduct.findIndex(
 			(product) => product.id === Number(idRef.current.value)
 		);
 		if (index === -1) {
@@ -46,6 +69,15 @@ function AddProduct() {
 			setIdUnique(false);
 		}
 	};
+
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner />
+				Loading...
+			</div>
+		);
+	}
 
 	return (
 		<div>
@@ -60,9 +92,14 @@ function AddProduct() {
 			<label>Description</label> <br />
 			<input type='text' ref={descRef} /> <br />
 			<label>Category</label> <br />
-			<input type='text' ref={catRef} /> <br />
+			<select ref={catRef}>
+				{categories.map((category) => (
+					<option>{category.name}</option>
+				))}
+			</select>{' '}
+			<br />
 			<label>Image</label> <br />
-			<input type='file' alt='submit' ref={imgRef} /> <br />
+			<input type='url' alt='submit' ref={imgRef} /> <br />
 			<label>Rate</label> <br />
 			<input type='number' ref={rateRef} /> <br />
 			<label>Count</label> <br />

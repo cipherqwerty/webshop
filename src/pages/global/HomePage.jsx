@@ -1,12 +1,29 @@
-import { useState } from 'react';
-import productsJSON from '../../data/products.json';
+import { useEffect, useState } from 'react';
+// import productsJSON from '../../data/products.json';
 import { Link } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../../css/HomePage.css';
 import { Button } from '@mui/material';
+import { Spinner } from 'react-bootstrap';
 function HomePage() {
-	const [product, setProduct] = useState(productsJSON);
+	const [product, setProduct] = useState([]);
+	const [categories, setCategories] = useState([]);
+	const [isLoading, setLoading] = useState(true);
+	const [origProduct, setOrigProduct] = useState([]);
+	useEffect(() => {
+		fetch(process.env.REACT_APP_CATEGORIES_URL)
+			.then((res) => res.json())
+			.then((data) => setCategories(data || []));
+
+		fetch(process.env.REACT_APP_PRODUCTS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setProduct(data || []);
+				setOrigProduct(data || []);
+				setLoading(false);
+			});
+	}, []);
 
 	const addToCart = (addedProduct) => {
 		const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -25,6 +42,15 @@ function HomePage() {
 
 		// Kui ei ole ostukorvis olemas, siis pushin (lisan l6ppu kogusega: 1)
 	};
+
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner />
+				Loading...
+			</div>
+		);
+	}
 
 	const sortAZ = () => {
 		product.sort((a, b) => a.title.localeCompare(b.title));
@@ -46,20 +72,25 @@ function HomePage() {
 		setProduct(product.slice());
 	};
 
-	const filterMens = () => {
-		const result = product.filter(
-			(product) => product.category === "men's clothing"
+	const filterCategories = (categories) => {
+		const result = origProduct.filter(
+			(product) => product.category === categories
 		);
-		setProduct(result); // EI TOOTA
-	};
-
-	const filterJewelry = () => {
-		const result = product.filter((product) => product.category === 'jewelery');
-		setProduct(result); // EI TOOTA
+		setProduct(result);
 	};
 
 	return (
 		<div>
+			<div>{product.length} tk</div>
+			{categories.map((category) => (
+				<Button
+					key={category.name}
+					onClick={() => filterCategories(category.name)}
+					variant='contained'
+				>
+					{category.name}
+				</Button>
+			))}
 			<div>
 				<Button variant='outlined' onClick={sortAZ}>
 					Sort A-Z
@@ -74,13 +105,8 @@ function HomePage() {
 					Rating
 				</Button>
 			</div>
-
-			<div>
-				<Button onClick={filterMens}>men's clothing</Button>
-				<Button onClick={filterJewelry}>jewelery</Button>
-			</div>
 			<div className='products'>
-				{product.map((product, id) => (
+				{product.map((product) => (
 					<div className='home-product' key={product.id}>
 						<img style={{ width: '100px' }} src={product.image} alt='' />
 						<div className='product-title'>{product.title}</div>
@@ -93,7 +119,7 @@ function HomePage() {
 						>
 							Add To Cart
 						</Button>
-						<Link to={'/product/' + id}>
+						<Link to={'/product/' + product.id}>
 							<Button variant='contained' style={{ marginLeft: '10px' }}>
 								Inspect
 							</Button>
@@ -101,7 +127,6 @@ function HomePage() {
 					</div>
 				))}
 			</div>
-
 			<ToastContainer />
 		</div>
 	);

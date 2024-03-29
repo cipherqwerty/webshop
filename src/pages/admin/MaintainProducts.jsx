@@ -1,13 +1,32 @@
-import { useRef, useState } from 'react';
-import productJSON from '../../data/products.json';
+import { useEffect, useRef, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 function MaintainProducts() {
-	const [product, setProduct] = useState(productJSON);
-
 	const searchRef = useRef();
-	const removeX = (e) => {
-		productJSON.splice(e, 1);
-		setProduct(productJSON.slice());
+
+	const [product, setProduct] = useState([]);
+	const [isLoading, setLoading] = useState(true);
+	const [origProduct, setOrigProduct] = useState([]);
+
+	useEffect(() => {
+		fetch(process.env.REACT_APP_PRODUCTS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setProduct(data || []);
+				setOrigProduct(data || []);
+				setLoading(false);
+			});
+	}, []);
+
+	const removeX = (productId) => {
+		const index = origProduct.findIndex((product) => product.id === productId);
+		origProduct.splice(index, 1);
+		// setProduct(origProduct.slice());
+		searchFromProducts();
+		fetch(process.env.REACT_APP_PRODUCTS_URL, {
+			method: 'PUT',
+			body: JSON.stringify(origProduct),
+		});
 	};
 
 	const sortFirstLetter = () => {
@@ -16,7 +35,7 @@ function MaintainProducts() {
 	};
 
 	const searchFromProducts = () => {
-		const result = productJSON.filter(
+		const result = origProduct.filter(
 			(el) =>
 				el.title
 					.toLowerCase()
@@ -30,9 +49,18 @@ function MaintainProducts() {
 	};
 
 	const changeActive = (i) => {
-		productJSON[i].active = !productJSON[i].active;
-		setProduct(productJSON.slice());
+		origProduct[i].active = !origProduct[i].active;
+		setProduct(origProduct.slice());
 	};
+
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner />
+				Loading...
+			</div>
+		);
+	}
 
 	return (
 		<div>
@@ -53,25 +81,29 @@ function MaintainProducts() {
 					</tr>
 				</thead>
 				<tbody>
-					{product.map((toode, id) => (
+					{product.map((toode, index) => (
 						<tr
-							onClick={() => changeActive(id)}
 							key={toode.id}
 							className={toode.active ? 'active' : 'in-active'}
 						>
-							<td>{toode.id}</td>
-							<td>{toode.title}</td>
-							<td>{toode.price}</td>
-							<td style={{ width: '800px' }}>{toode.description}</td>
-							<td>{toode.category}</td>
-							<td>
+							<td onClick={() => changeActive(index)}>{toode.id}</td>
+							<td onClick={() => changeActive(index)}>{toode.title}</td>
+							<td onClick={() => changeActive(index)}>{toode.price}</td>
+							<td
+								onClick={() => changeActive(index)}
+								style={{ width: '800px' }}
+							>
+								{toode.description}
+							</td>
+							<td onClick={() => changeActive(index)}>{toode.category}</td>
+							<td onClick={() => changeActive(index)}>
 								<img style={{ height: '60px' }} src={toode.image} alt='/' />
 							</td>
-							<td>{toode.rating.rate}</td>
-							<td>{toode.rating.count}</td>
+							<td onClick={() => changeActive(index)}>{toode.rating.rate}</td>
+							<td onClick={() => changeActive(index)}>{toode.rating.count}</td>
 							<td>
-								<button onClick={() => removeX(id)}>x</button>
-								<Link to={'/admin/edit-product/' + id}>
+								<button onClick={() => removeX(toode.id)}>x</button>
+								<Link to={'/admin/edit-product/' + toode.id}>
 									<button>Edit</button>
 								</Link>
 							</td>

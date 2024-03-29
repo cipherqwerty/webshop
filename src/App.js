@@ -18,6 +18,13 @@ import Signup from './pages/auth/Signup';
 import NavBar from './components/NavBar';
 import Supplier from './pages/admin/Supplier';
 
+// Hooks: mingisugune erikood mis on tehtud Reactis
+// 1. Peab algama use eesliidesega
+// 2. Peab olema imporditud
+// 3. Alati sulud lõpus - see käivitatakse
+// 4. Ei tohi olla funktsiooni sees tehtud
+// 5. Ei tohi olla tingimuslikult tehtud
+
 function App() {
 	return (
 		<div className='App'>
@@ -28,11 +35,11 @@ function App() {
 				<Route path='contact' element={<ContactUs />} />
 				<Route path='shops' element={<Shops />} />
 				<Route path='cart' element={<Cart />} />
-				<Route path='product/:index' element={<SingleProduct />} />
+				<Route path='product/:productId' element={<SingleProduct />} />
 
 				<Route path='admin' element={<AdminHome />} />
 				<Route path='admin/add-product' element={<AddProduct />} />
-				<Route path='admin/edit-product/:index' element={<EditProduct />} />
+				<Route path='admin/edit-product/:productId' element={<EditProduct />} />
 				<Route path='admin/maintain-products' element={<MaintainProducts />} />
 				<Route
 					path='admin/maintain-categories'

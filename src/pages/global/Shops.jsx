@@ -8,6 +8,7 @@ function Shops() {
 		zoom: 11,
 	});
 
+	// uef = votta poed andmebaasist
 	return (
 		<div>
 			<Button

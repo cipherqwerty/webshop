@@ -1,10 +1,33 @@
-import React from 'react';
-import productJSON from '../../data/products.json';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Spinner } from 'react-bootstrap';
 function SingleProduct() {
-	const { index } = useParams();
+	const [isLoading, setLoading] = useState(true);
+	const [origProduct, setOrigProduct] = useState([]);
 
-	const result = productJSON[index];
+	useEffect(() => {
+		fetch(process.env.REACT_APP_PRODUCTS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setOrigProduct(data || []);
+				setLoading(false);
+			});
+	}, []);
+
+	const { productId } = useParams();
+
+	const result = origProduct.find(
+		(product) => product.id === Number(productId)
+	);
+
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner />
+				Loading...
+			</div>
+		);
+	}
 
 	if (result === undefined) {
 		return <div>Product is not available</div>;

@@ -1,12 +1,27 @@
-import React, { useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import productJSON from '../../data/products.json';
 // check ID unique
 function EditProduct() {
-	const { index } = useParams();
+	const { productId } = useParams();
 
 	const [idUnique, setIdUnique] = useState(true);
-	const result = productJSON[index];
+	const [isLoading, setLoading] = useState(true);
+	const [origProduct, setOrigProduct] = useState([]);
+	const [product, setProduct] = useState([]);
+
+	useEffect(() => {
+		fetch(process.env.REACT_APP_PRODUCTS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setProduct(data || []);
+				setOrigProduct(data || []);
+				setLoading(false);
+			});
+	}, []);
+
+	const result = productJSON.find((result) => result.id === Number(productId));
+	const navigate = useNavigate();
 
 	const idRef = useRef();
 	const titleRef = useRef();
@@ -18,6 +33,10 @@ function EditProduct() {
 	const countRef = useRef();
 
 	const changeProduct = () => {
+		const index = productJSON.findIndex(
+			(product) => product.id === Number(productId)
+		);
+
 		productJSON[index] = {
 			id: Number(idRef.current.value),
 			title: titleRef.current.value,
@@ -30,6 +49,7 @@ function EditProduct() {
 				count: Number(countRef.current.value),
 			},
 		};
+		navigate('/admin/maintain-products');
 	};
 
 	const checkIdUnique = () => {
@@ -80,7 +100,11 @@ function EditProduct() {
 				ref={countRef}
 			/>{' '}
 			<br />
-			<button disabled={idUnique === false} onClick={changeProduct}>
+			<button
+				onChange={navigate}
+				disabled={idUnique === false}
+				onClick={changeProduct}
+			>
 				Change
 			</button>
 		</div>

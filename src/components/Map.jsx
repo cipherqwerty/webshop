@@ -13,6 +13,8 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 function Map(props) {
+	// useEffect
+
 	return (
 		<div>
 			<MapContainer
