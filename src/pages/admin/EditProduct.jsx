@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Spinner } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
-import productJSON from '../../data/products.json';
+
 // check ID unique
 function EditProduct() {
 	const { productId } = useParams();
@@ -20,7 +21,7 @@ function EditProduct() {
 			});
 	}, []);
 
-	const result = productJSON.find((result) => result.id === Number(productId));
+	const result = origProduct.find((result) => result.id === Number(productId));
 	const navigate = useNavigate();
 
 	const idRef = useRef();
@@ -33,11 +34,11 @@ function EditProduct() {
 	const countRef = useRef();
 
 	const changeProduct = () => {
-		const index = productJSON.findIndex(
+		const index = origProduct.findIndex(
 			(product) => product.id === Number(productId)
 		);
 
-		productJSON[index] = {
+		product[index] = {
 			id: Number(idRef.current.value),
 			title: titleRef.current.value,
 			price: Number(priceRef.current.value),
@@ -53,7 +54,7 @@ function EditProduct() {
 	};
 
 	const checkIdUnique = () => {
-		const index = productJSON.findIndex(
+		const index = origProduct.findIndex(
 			(product) => product.id === Number(idRef.current.value)
 		);
 		if (index !== -1) {
@@ -63,6 +64,13 @@ function EditProduct() {
 		}
 	};
 
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner /> Loading...
+			</div>
+		);
+	}
 	return (
 		<div>
 			<div>Change product</div> <br />

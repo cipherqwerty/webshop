@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Map from '../../components/Map';
 import { Button } from '@mui/material';
+import { Spinner } from 'react-bootstrap';
 
 function Shops() {
 	const [coordinaates, setCoordinates] = useState({
@@ -8,7 +9,27 @@ function Shops() {
 		zoom: 11,
 	});
 
+	const [shops, setShops] = useState([]);
+	const [isLoading, setLoading] = useState(true);
+
 	// uef = votta poed andmebaasist
+
+	useEffect(() => {
+		fetch(process.env.REACT_APP_SHOPS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setShops(data || []);
+				setLoading(false);
+			});
+	}, []);
+
+	if (isLoading) {
+		return (
+			<div>
+				<Spinner /> Loading...
+			</div>
+		);
+	}
 	return (
 		<div>
 			<Button
@@ -21,26 +42,13 @@ function Shops() {
 			>
 				Kõik Tallinna poed
 			</Button>
-			<Button
-				onClick={() => setCoordinates({ lngLat: [59.4231, 24.7991], zoom: 13 })}
-			>
-				Ülemiste
-			</Button>
-			<Button
-				onClick={() => setCoordinates({ lngLat: [59.4277, 24.7193], zoom: 13 })}
-			>
-				Kristiine
-			</Button>
-			<Button
-				onClick={() => setCoordinates({ lngLat: [58.3779, 26.7308], zoom: 13 })}
-			>
-				Tasku
-			</Button>
-			<Button
-				onClick={() => setCoordinates({ lngLat: [59.4407, 24.738], zoom: 13 })}
-			>
-				Balti Jaam
-			</Button>
+			<br />
+			{shops.map((shop) => (
+				<span>
+					<Button>{shop.name}</Button>
+				</span>
+			))}
+
 			<Map mapCoordinaates={coordinaates} />
 		</div>
 	);

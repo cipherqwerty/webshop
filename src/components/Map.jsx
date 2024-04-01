@@ -3,6 +3,7 @@ import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 import ChangeView from './ChangeView';
 import L from 'leaflet';
+import { useEffect, useState } from 'react';
 let DefaultIcon = L.icon({
 	iconUrl: icon,
 	shadowUrl: iconShadow,
@@ -13,7 +14,14 @@ let DefaultIcon = L.icon({
 L.Marker.prototype.options.icon = DefaultIcon;
 
 function Map(props) {
-	// useEffect
+	const [shops, setShops] = useState([]);
+	useEffect(() => {
+		fetch(process.env.REACT_APP_SHOPS_URL)
+			.then((res) => res.json())
+			.then((data) => {
+				setShops(data || []);
+			});
+	}, []);
 
 	return (
 		<div>
@@ -31,28 +39,29 @@ function Map(props) {
 					attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 					url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
 				/>
-				<Marker position={[59.4231, 24.7991]}>
-					<Popup>
-						Ülemiste keskus. <br /> Avatud 9-20
-					</Popup>
-				</Marker>
-				<Marker position={[59.4277, 24.7193]}>
-					<Popup>
-						Kristiine keskus. <br /> Avatud 10-21
-					</Popup>
-				</Marker>
-				<Marker position={[59.4407, 24.738]}>
-					<Popup>
-						Balti Jaam
-						<br /> Avatud 9-13
-					</Popup>
-				</Marker>
-				<Marker position={[58.3779, 26.7308]}>
-					<Popup>
-						Tasku
-						<br /> Avatud 9-19
-					</Popup>
-				</Marker>
+
+				{shops.map((shop) => (
+					<div>
+						<Marker position={[shop.latitude, shop.longitude]}>
+							<Popup>
+								{shop.name} <br />
+								Avatud: {shop.open}
+							</Popup>
+						</Marker>
+						<Marker position={[shop.latitude, shop.longitude]}>
+							<Popup>
+								{shop.name} <br />
+								Avatud: {shop.open}
+							</Popup>
+						</Marker>
+						<Marker position={[shop.latitude, shop.longitude]}>
+							<Popup>
+								{shop.name} <br />
+								Avatud: {shop.open}
+							</Popup>
+						</Marker>
+					</div>
+				))}
 			</MapContainer>
 		</div>
 	);

@@ -19,14 +19,20 @@ function MaintainShops() {
 			name: nameRef.current.value,
 			latitude: Number(latitudeRef.current.value),
 			longitude: Number(longitudeRef.current.value),
-			openHours: Number(openTimeRef.current.value),
+			open: openTimeRef.current.value,
 		};
+
 		shop.push(addShop);
 		setShops(shop.slice());
 		fetch(process.env.REACT_APP_SHOPS_URL, {
 			method: 'PUT',
 			body: JSON.stringify(shop),
 		});
+
+		nameRef.current.value = '';
+		latitudeRef.current.value = '';
+		longitudeRef.current.value = '';
+		openTimeRef.current.value = '';
 	};
 
 	const delNewShop = (e) => {
@@ -71,9 +77,12 @@ function MaintainShops() {
 				<div key={e}>
 					<div>
 						{shops.name}
+						<br />
 						{shops.latitude}
+						<br />
 						{shops.longitude}
-						{shops.openHours}
+						<br />
+						{shops.open}
 
 						<BB variant='danger' onClick={() => delNewShop(e)}>
 							x
