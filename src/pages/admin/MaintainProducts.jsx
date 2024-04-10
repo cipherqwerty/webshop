@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Spinner } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import styles from '../../css/MaintainProducts.module.css';
 function MaintainProducts() {
 	const searchRef = useRef();
 
@@ -48,9 +49,17 @@ function MaintainProducts() {
 		setProduct(result);
 	};
 
-	const changeActive = (i) => {
-		origProduct[i].active = !origProduct[i].active;
-		setProduct(origProduct.slice());
+	const changeActive = (productId) => {
+		console.log(productId);
+		const index = origProduct.findIndex((product) => product.id === productId);
+		console.log(index);
+		origProduct[index].active = !origProduct[index].active;
+		// setProduct(origProduct.slice());
+		searchFromProducts();
+		fetch(process.env.REACT_APP_PRODUCTS_URL, {
+			method: 'PUT',
+			body: JSON.stringify(origProduct),
+		});
 	};
 
 	if (isLoading) {
@@ -81,28 +90,38 @@ function MaintainProducts() {
 					</tr>
 				</thead>
 				<tbody>
-					{product.map((toode, index) => (
+					{product.map((toode) => (
 						<tr
 							key={toode.id}
-							className={toode.active ? 'active' : 'in-active'}
+							className={toode.active ? styles.active : styles.inactive}
 						>
-							<td onClick={() => changeActive(index)}>{toode.id}</td>
-							<td onClick={() => changeActive(index)}>{toode.title}</td>
-							<td onClick={() => changeActive(index)}>{toode.price}</td>
+							<td onClick={() => changeActive(toode.id)}>{toode.id}</td>
+							<td onClick={() => changeActive(toode.id)}>{toode.title}</td>
+							<td onClick={() => changeActive(toode.id)}>{toode.price}</td>
 							<td
-								onClick={() => changeActive(index)}
+								onClick={() => changeActive(toode.id)}
 								style={{ width: '800px' }}
 							>
 								{toode.description}
 							</td>
-							<td onClick={() => changeActive(index)}>{toode.category}</td>
-							<td onClick={() => changeActive(index)}>
+							<td onClick={() => changeActive(toode.id)}>{toode.category}</td>
+							<td onClick={() => changeActive(toode.id)}>
 								<img style={{ height: '60px' }} src={toode.image} alt='/' />
 							</td>
-							<td onClick={() => changeActive(index)}>{toode.rating.rate}</td>
-							<td onClick={() => changeActive(index)}>{toode.rating.count}</td>
+							<td onClick={() => changeActive(toode.id)}>
+								{toode.rating.rate}
+							</td>
+							<td onClick={() => changeActive(toode.id)}>
+								{toode.rating.count}
+							</td>
 							<td>
-								<button onClick={() => removeX(toode.id)}>x</button>
+								<button
+									// className={styles['delete-btn']}
+									className={styles.delete_btn}
+									onClick={() => removeX(toode.id)}
+								>
+									x
+								</button>
 								<Link to={'/admin/edit-product/' + toode.id}>
 									<button>Edit</button>
 								</Link>

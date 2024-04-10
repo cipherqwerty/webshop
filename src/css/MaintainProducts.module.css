@@ -1,0 +1,15 @@
+.active {
+	background-color: green;
+	border: 1px solid green;
+	opacity: 80%;
+}
+
+.inactive {
+	background-color: red;
+	border: 1px solid red;
+}
+
+.delete_btn {
+	background-color: red;
+	border: none;
+}

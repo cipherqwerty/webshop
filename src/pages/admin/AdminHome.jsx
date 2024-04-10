@@ -20,7 +20,10 @@ function AdminHome() {
 				{t('maintain-products')}
 			</Button>{' '}
 			<Button as={Link} to='/admin/supplier' variant='primary'>
-				Tarnija
+				{t('supplier')}
+			</Button>{' '}
+			<Button as={Link} to='/admin/maintain-pictures' variant='secondary'>
+				{t('maintain-pictures')}
 			</Button>{' '}
 		</div>
 	);

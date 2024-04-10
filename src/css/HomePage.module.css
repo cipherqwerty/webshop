@@ -3,25 +3,25 @@
 	grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
 
-.home-product {
+.product {
 	border: 1px solid lightgray;
 	padding: 20px 5px;
 }
 
-.home-product img {
+.product img {
 	height: 150px;
 	width: 150px;
 	transition: 0.3s ease-in;
 }
 
-.home-product div:nth-child(2) {
+.product div:nth-child(2) {
 	height: 90px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
 }
 
-.home-product:hover img {
+.product:hover img {
 	transform: scale(1.05);
 	transition: 0.3s ease-in;
 }

@@ -16,6 +16,8 @@ const resources = {
 			cart: 'To cart',
 			login: 'Login',
 			signup: 'Create account',
+			supplier: 'Supplier',
+			'maintain-pictures': 'Maintain pictures',
 		},
 	},
 	ee: {
@@ -29,6 +31,8 @@ const resources = {
 			cart: 'Ostukorvi',
 			login: 'Login',
 			signup: 'Loo uus konto',
+			supplier: 'Tarnija',
+			'maintain-pictures': 'Halda pilte',
 		},
 	},
 

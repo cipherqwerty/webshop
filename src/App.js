@@ -17,6 +17,7 @@ import Login from './pages/auth/Login';
 import Signup from './pages/auth/Signup';
 import NavBar from './components/NavBar';
 import Supplier from './pages/admin/Supplier';
+import MaintainPictures from './pages/admin/MaintainPictures';
 
 // Hooks: mingisugune erikood mis on tehtud Reactis
 // 1. Peab algama use eesliidesega
@@ -47,6 +48,7 @@ function App() {
 				/>
 				<Route path='admin/maintain-shops' element={<MaintainShops />} />
 				<Route path='admin/supplier' element={<Supplier />} />
+				<Route path='admin/maintain-pictures' element={<MaintainPictures />} />
 
 				<Route path='login' element={<Login />} />
 				<Route path='signup' element={<Signup />} />

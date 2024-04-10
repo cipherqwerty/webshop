@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
-import '../../css/Cart.css';
+import React, { useContext, useState } from 'react';
+import style from '../../css/Cart.module.css';
 import Star from '@mui/icons-material/Star';
 import LocalShipping from '@mui/icons-material/LocalShipping';
-import ParcelMachines from '../../components/ParcelMachines';
+import ParcelMachines from '../../components/cart/ParcelMachines';
+import Payment from '../../components/cart/Payment';
+import { CartSumContext } from '../../store/CartSumContext';
 
 function Cart() {
 	const [item, setItem] = useState(
 		JSON.parse(localStorage.getItem('cart')) || []
 	);
+
+	const { setCartSum } = useContext(CartSumContext);
 
 	const calculateTotal = () => {
 		let sum = 0;
@@ -16,15 +20,16 @@ function Cart() {
 	};
 
 	const removeItem = (index) => {
-		const updatedItems = [...item];
-		updatedItems.splice(index, 1);
-		setItem(updatedItems);
-		localStorage.setItem('cart', JSON.stringify(updatedItems));
+		item.splice(index, 1);
+		setItem(item.slice());
+		localStorage.setItem('cart', JSON.stringify(item));
+		setCartSum(calculateTotal());
 	};
 
 	const clearCart = () => {
 		setItem([]);
 		localStorage.removeItem('cart');
+		setCartSum(0);
 	};
 
 	const decreaseQuantity = (index) => {
@@ -35,6 +40,7 @@ function Cart() {
 		}
 		setItem(updatedItems);
 		localStorage.setItem('cart', JSON.stringify(updatedItems));
+		setCartSum(calculateTotal());
 	};
 
 	const increaseQuantity = (index) => {
@@ -42,39 +48,39 @@ function Cart() {
 		updatedItems[index].quantity += 1;
 		setItem(updatedItems);
 		localStorage.setItem('cart', JSON.stringify(updatedItems));
+		setCartSum(calculateTotal());
 	};
 
 	return (
 		<div>
-			<div className='cart-top'>
+			<div className={style.cart_top}>
 				{item.length > 1 ? <div>Items in cart: {item.length}</div> : undefined}
 				{item.length === 0 && <div>The cart is currently empty</div>}
-				{item.length > 1 ? (
-					<img
-						className='button'
-						src='/empty-cart.png'
-						alt=''
-						onClick={clearCart}
-					/>
-				) : undefined}
+
+				<img
+					className={style.button}
+					src='/empty-cart.png'
+					alt=''
+					onClick={clearCart}
+				/>
 			</div>
 
 			{item.map((cartProduct, index) => (
-				<div className='product' key={index}>
+				<div className={style.product} key={index}>
 					<img
-						className='image'
+						className={style.image}
 						style={{ width: '60px' }}
 						src={cartProduct.product.image}
 						alt='/'
 					/>
-					<div className='title'>{cartProduct.product.title}</div>
-					<div className='rate'>
+					<div className={style.title}>{cartProduct.product.title}</div>
+					<div className={style.rate}>
 						{cartProduct.product.rating.rate}
 						<Star />
 					</div>
-					<div className='quantity'>
+					<div className={style.quantity}>
 						<img
-							className='button'
+							className={style.button}
 							onClick={() => decreaseQuantity(index)}
 							src='/minus.png'
 							alt=''
@@ -83,28 +89,29 @@ function Cart() {
 						<img
 							src='/plus.png'
 							alt=''
-							className='button'
+							className={style.button}
 							onClick={() => increaseQuantity(index)}
 						/>
 					</div>
 
-					<div className='total'>
+					<div className={style.total}>
 						{(cartProduct.product.price * cartProduct.quantity).toFixed(2)} €
 					</div>
 					<img
 						src='/remove.png'
 						alt=''
-						className='button'
+						className={style.button}
 						onClick={() => removeItem(index)}
 					/>
 				</div>
 			))}
 
-			<div className='cart-bottom'>
+			<div className={style.cart_bottom}>
 				{item.length > 0 && (
 					<>
 						<div>Total: {calculateTotal()} €</div>
 						<ParcelMachines />
+						<Payment sum={calculateTotal()} />
 						<LocalShipping />
 					</>
 				)}

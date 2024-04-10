@@ -3,9 +3,18 @@ import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-
+import { useContext } from 'react';
+import { CartSumContext } from '../store/CartSumContext';
+import { AuthContext } from '../store/AuthContext';
+import { useNavigate } from 'react-router-dom';
 function NavBar() {
 	const { t, i18n } = useTranslation();
+
+	const { cartSum } = useContext(CartSumContext);
+
+	const { loggedIn, setLoggedIn } = useContext(AuthContext);
+
+	const navigate = useNavigate();
 
 	const changeLangEe = () => {
 		i18n.changeLanguage('ee');
@@ -16,6 +25,10 @@ function NavBar() {
 		localStorage.setItem('language', lang); // js
 	};
 
+	const logout = () => {
+		setLoggedIn(false);
+		navigate('/');
+	};
 	return (
 		<Navbar collapseOnSelect expand='lg' className='bg-body-tertiary'>
 			<Container>
@@ -25,9 +38,11 @@ function NavBar() {
 				<Navbar.Toggle aria-controls='responsive-navbar-nav' />
 				<Navbar.Collapse id='responsive-navbar-nav'>
 					<Nav className='me-auto'>
-						<Nav.Link as={Link} to='/admin'>
-							Admin
-						</Nav.Link>
+						{loggedIn && (
+							<Nav.Link as={Link} to='/admin'>
+								Admin
+							</Nav.Link>
+						)}
 						<Nav.Link as={Link} to='/shops'>
 							{t('shops')}
 						</Nav.Link>
@@ -39,6 +54,7 @@ function NavBar() {
 						</Nav.Link>
 					</Nav>
 					<Nav>
+						<span>{cartSum} $</span>
 						<img
 							onClick={() => changeLang('ja')}
 							className='lang'
@@ -64,12 +80,17 @@ function NavBar() {
 							alt=''
 						/>
 
-						<Nav.Link as={Link} to='/login'>
-							{t('login')}
-						</Nav.Link>
-						<Nav.Link as={Link} to='/signup'>
-							{t('signup')}
-						</Nav.Link>
+						{loggedIn === false && (
+							<Nav.Link as={Link} to='/login'>
+								{t('login')}
+							</Nav.Link>
+						)}
+						{loggedIn === false && (
+							<Nav.Link as={Link} to='/signup'>
+								{t('signup')}
+							</Nav.Link>
+						)}
+						{loggedIn && <Nav.Link onClick={logout}>Log out</Nav.Link>}
 					</Nav>
 				</Navbar.Collapse>
 			</Container>

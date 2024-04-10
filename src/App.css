@@ -17,17 +17,6 @@
 	padding: 1px;
 }
 
-.active {
-	background-color: green;
-	border: 1px solid green;
-	opacity: 80%;
-}
-
-.in-active {
-	background-color: red;
-	border: 1px solid red;
-}
-
 .map {
 	height: 300px;
 	margin: 3%;
